@@ -1,0 +1,241 @@
+﻿@using System.Text.Json
+@model IEnumerable<CommandCenter.Models.CrisesModel>
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Painel de Crises";
+}
+
+@{
+    var acnOpcoes = new Dictionary<string, string>
+    {
+        { "peoplesoft", "Peoplesoft" },
+        { "datahub", "Datahub" },
+        { "staging", "Staging" },
+        { "profimetrics", "Profimetrics" },
+        { "concentradordpadsp", "Concentrador DPA/DSP" },
+        { "fidelize", "Fidelize" },
+        { "warmup", "Warmup" },
+        { "syncros", "Syncros" },
+        { "aplicacoes", "Aplicações" },
+        { "site", "Site" },
+        { "app", "App" },
+        { "oms", "OMS" },
+        { "retire", "Retire" },
+        { "veroit", "VeroIT" },
+        { "nexp", "NEXP" },
+        { "rappi", "RAPPI" },
+        { "sefaz", "SEFAZ" },
+        { "vtex", "VTEX" },
+        { "ogg", "OGG" },
+        { "freterapido", "Frete Rápido" },
+        { "adyen", "Adyen" },
+        { "wmsdelage", "WMS Delage" },
+        { "wmsknapp", "WMS KNAPP" },
+        { "wmsschaeffer", "WMS Schaeffer" },
+        { "acomp", "Acomp" },
+        { "pbm", "PBM" },
+        { "interplayersportaldadrogaria", "Interplayers - Portal da Drogaria" },
+        { "pactomaisfarmaciapopular", "Pacto Mais Farmácia Popular" },
+        { "clinicarx", "ClinicarX" },
+        { "linxqrlinxagilizaprocfitpos", "Linx (QrLinx, Agiliza, Procfit, POS)" },
+        { "suareceitadigital", "Sua Receita Digital" },
+        { "trncentre", "TrnCentre" },
+        { "epharma", "Epharma" },
+        { "funcionalcard", "Funcional Card" },
+        { "vidalink", "VidaLink" },
+        { "recargatelecomnet", "Recarga TelecomNet" },
+        { "servicosdepagamento", "Serviços de Pagamento" },
+        { "rede", "Rede" },
+        { "cielo", "Cielo" },
+        { "standby", "Standby" },
+        { "getnet", "Getnet" },
+        { "infraestrutura", "Infraestrutura" },
+        { "firewallswitchlinksintegracao", "Firewall, Switch, Links.... Integração" },
+        { "fw1100e", "FW 1100E" },
+        { "fw1000d", "FW 1000D" }
+    };
+}
+
+
+<div class="container mt-4">
+    <h1>Painel de Crises</h1>
+
+    <!-- Botão para abrir o modal de criação de crises -->
+    <button type="button" class="btn btn-primary" id="openCreateModal">
+        <i class="bi bi-plus-lg"></i> Nova Crise
+    </button>
+
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ACN</th> <!-- Substituí "Logo" pelo nome do ACN -->
+                    <th>Detalhes</th>
+                    <th>Atualizar</th>
+                    <th>Encerrar</th>
+                </tr>
+            </thead>
+            <tbody id="crisesTableBody">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var crise in Model)
+                    {
+                        <tr>
+                            <td>
+                                @crise.ACN <!-- Exibe o nome do ACN diretamente --> 
+                            </td> 
+                            <td>
+                                <button class="btn btn-info detalhes-crise"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalCrises"
+                                        data-tipo="@crise.TipoDeCrise"
+                                        data-incidente="@crise.NumeroDoIncidente"
+                                        data-abrangencia="@crise.Abrangencia"
+                                        data-acn="@crise.ACN"
+                                        data-causa="@crise.CausaDoIncidente"
+                                        data-impacto="@crise.ImpactoNosNegocios"
+                                        data-datahora="@crise.DataHoraIncidente.ToString("dd/MM/yyyy HH:mm")"
+                                        data-acionamento="@crise.DataHoraAcionamento.ToString("dd/MM/yyyy HH:mm")"
+                                        data-equipes="@crise.EquipesAtuando"
+                                        data-acoes='@JsonSerializer.Serialize(crise.AcoesRealizadas)'>
+                                    🔍 Detalhes
+                                </button>
+                            </td>
+                            <td>
+                                <button data-id="@crise.Id" class="btn btn-warning atualizar-crise">✏️ Atualizar</button>
+                            </td>
+                            <td>
+                                @if (crise.DataEncerramento == null){
+                                    <button data-id="@crise.Id" class="btn btn-danger encerrar-crise">🗑️ Encerrar</button>
+                                }else
+                                {
+                                    <span>crise já encerrada</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">Nenhuma crise registrada.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal para Criar Nova Crise -->
+<div class="modal fade" id="modalCrises" tabindex="-1" aria-labelledby="modalCrisesLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrisesLabel">Crise</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modalContent" id="modalContent">
+                <!-- O conteúdo do formulário será carregado via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Função para carregar o formulário de criação via AJAX
+            $("#openCreateModal").on("click", function () {
+                $.ajax({
+                    url: "/Crises/Create",
+                    type: "GET",
+                    success: function (response) {
+                        $("#modalContent").html(response);
+                        $("#modalCrises").modal("show");
+                    },
+                    error: function () {
+                        alert("Erro ao carregar o formulário de criação!");
+                    }
+                });
+            });
+
+            // Função para exibir os detalhes da crise no modal
+            $(document).on("click", ".detalhes-crise", function () {
+                
+                let tipo = $(this).data("tipo");
+                let incidente = $(this).data("incidente");
+                let abrangencia = $(this).data("abrangencia");
+                let acn = $(this).data("acn");
+                let causa = $(this).data("causa");
+                let impacto = $(this).data("impacto");
+                let dataHora = $(this).data("datahora");
+                let acionamento = $(this).data("acionamento");
+                let equipes = $(this).data("equipes");
+                let acoes = $(this).data("acoes");
+
+                historicoHtml = "<ul>"
+                if (Array.isArray(acoes)) {         
+                    historicoHtml +=  acoes.map(acao => `<li>✔️ ${acao}</li>`).join('');    
+                } else {
+                    historicoHtml = acoes ? `<li>✔️ ${acoes}</li>` : "<li>Nenhuma ação registrada.</li>";
+                }
+                historicoHtml += "</ul>"
+
+                let mensagem = `🔴 ${tipo}</br>
+                🔢 Incidente: ${incidente}</br>
+                🏭 Unidades: ${abrangencia}</br>
+                💥 Elementos Comprometidos: ${acn}</br>
+                🧾 Causa do incidente: ${causa}</br>
+                💸 Impacto nos negócios: ${impacto}</br>
+                🕛 Data e hora do Incidente: ${dataHora}</br>
+                🕧 Data do Acionamento: ${acionamento}</br>
+                👥 Equipes Atuando: ${equipes}</br>
+
+                📆 Histórico de ações realizadas:</br>${historicoHtml}`;
+
+                    $("#modalContent").html(mensagem);
+                    $("#modalCrises").modal("show");
+            });
+
+        
+
+            // Abrir modal para editar crise
+            $(document).on("click", ".atualizar-crise", function () {
+                let criseId = $(this).data("id");
+
+                $.ajax({
+                    url: "/Crises/Edit?id=" + criseId,
+                    type: "GET",
+                    success: function (response) {
+                        $("#modalContent").html(response);
+                    $("#modalCrises").modal("show");
+                    },
+                    error: function () {
+                        alert("Erro ao carregar o formulário de edição!");
+                    }
+                });
+            });
+
+
+            $(document).on("click", ".encerrar-crise", function () {
+                let criseId = $(this).data("id");
+
+                $.ajax({
+                    url: "/Crises/Delete?id=" + criseId,
+                    type: "GET",
+                    success: function (response) {
+                        $("#modalContent").html(response);
+                        $("#modalCrises").modal("show");
+                    },
+                    error: function () {
+                        alert("Erro ao carregar o formulário de edição!");
+                    }
+                });
+            });
+        });
+
+    </script>
+}

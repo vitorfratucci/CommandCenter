@@ -1,0 +1,71 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Atualização de Informativo";
+}
+
+<div class="atualizacaoinf-container">
+    <h1>@ViewData["Title"]</h1>
+
+    <!-- Campo de Seleção de Informativo -->
+    <div class="mb-3">
+        <label for="selecionarInformativo" class="form-label">Selecione o Informativo para Atualizar:</label>
+        <select id="selecionarInformativo" class="form-select">
+            <option value="" selected disabled>Busque o informativo...</option>
+            <!-- Opções de informativos virão do banco de dados -->
+        </select>
+    </div>
+
+    <!-- Campo de Atualização de Status -->
+    <div class="mb-3">
+        <label for="atualizarStatusInformativo" class="form-label">Atualizar Status:</label>
+        <textarea class="form-control" id="atualizarStatusInformativo" name="atualizarStatusInformativo" placeholder="Insira o novo status para o informativo"></textarea>
+    </div>
+
+    <!-- Seleção de Emoticons para Status do Informativo -->
+    <div class="form-group mb-3">
+        <label>Status do Informativo (Selecione):</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" id="status-vermelho" name="statusInformativo" value="degradado">
+            <label class="form-check-label" for="status-vermelho">🔴 Degradado</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" id="status-amarelo" name="statusInformativo" value="em-validacao">
+            <label class="form-check-label" for="status-amarelo">🟡 Em Validação</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" id="status-verde" name="statusInformativo" value="normalizado">
+            <label class="form-check-label" for="status-verde">🟢 Normalizado</label>
+        </div>
+    </div>
+
+    <!-- Botão para Atualizar Informativo -->
+    <button type="button" class="btn btn-primary mt-3" onclick="atualizarInformativo()">Atualizar Informativo</button>
+</div>
+
+<script>
+    // Função para atualizar o informativo (simulação)
+    function atualizarInformativo() {
+        const informativoSelecionado = document.getElementById("selecionarInformativo").value;
+        const novoStatus = document.querySelector('input[name="statusInformativo"]:checked')?.value;
+        const statusTexto = document.getElementById("atualizarStatusInformativo").value;
+
+        if (informativoSelecionado && novoStatus && statusTexto) {
+            alert(`Informativo ${informativoSelecionado} atualizado com status: ${novoStatus} e descrição: ${statusTexto}`);
+            // Aqui você faria uma chamada AJAX para atualizar no banco
+        } else {
+            alert("Por favor, selecione um informativo, o status e insira a descrição.");
+        }
+    }
+</script>
+
+<style>
+    .atualizacaoinf-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f4f4f4;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 100px;
+    }
+</style>

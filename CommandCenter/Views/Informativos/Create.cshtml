@@ -1,0 +1,211 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Informativo";
+}
+
+<div class="informativo-container">
+    <h1>@ViewData["Title"]</h1>
+    <p>Selecione o tipo de informativo e preencha os detalhes abaixo.</p>
+
+    <!-- Seletor de tipo de informativo com espaçamento adicional -->
+    <div class="form-group mb-3">
+        <label for="tipoInformativo">Tipo de Informativo:</label>
+        <select id="tipoInformativo" class="form-control" onchange="toggleInformativoFields()">
+            <option value="">Selecione...</option>
+            <option value="sistemas">Incidente para Sistemas</option>
+            <option value="lojas">Incidente para Lojas</option>
+        </select>
+    </div>
+
+    <!-- Campos específicos para Incidentes de Sistemas -->
+    <div id="sistemasFields" style="display: none;">
+        <h3>Incidente para Sistemas</h3>
+
+        <!-- Seleção de Emoticons para Status de Sistemas -->
+        <div class="form-group mb-3">
+            <label>Status do Informativo:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="sistema-vermelho" name="statusSistema" value="times-acoinados">
+                <label class="form-check-label" for="sistema-vermelho">🔴 Times sendo acionados</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="sistema-amarelo" name="statusSistema" value="times-atuando">
+                <label class="form-check-label" for="sistema-amarelo">🟡 Times atuando</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="sistema-verde" name="statusSistema" value="normalizado">
+                <label class="form-check-label" for="sistema-verde">🟢 Normalizado</label>
+            </div>
+        </div>
+
+        <!-- Campo Problema/Serviço/Aplicação Impactado -->
+        <div class="mb-3">
+            <label for="problemaImpactado" class="form-label">Problema/Serviço/Aplicação Impactado:</label>
+            <textarea class="form-control" id="problemaImpactado" name="problemaImpactado" placeholder="Descreva o problema, serviço ou aplicação impactado(a)"></textarea>
+        </div>
+
+        <!-- Impacto -->
+        <div class="mb-3">
+            <label for="impactoSistemas" class="form-label">Impacto:</label>
+            <textarea class="form-control" id="impactoSistemas" name="impactoSistemas" placeholder="Descreva o impacto"></textarea>
+        </div>
+
+        <!-- Abrangência -->
+        <div class="mb-3">
+            <label class="form-label">Selecione a abrangência:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="dsp" name="abrangencia" value="DSP">
+                <label class="form-check-label" for="dsp">DSP</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="dpa" name="abrangencia" value="DPA">
+                <label class="form-check-label" for="dpa">DPA</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="matriz" name="abrangencia" value="Matriz">
+                <label class="form-check-label" for="matriz">Matriz</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cd-ba" name="abrangencia" value="CD BA">
+                <label class="form-check-label" for="cd-ba">CD BA</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cd-es" name="abrangencia" value="CD ES">
+                <label class="form-check-label" for="cd-es">CD ES</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cd-sp" name="abrangencia" value="CD SP">
+                <label class="form-check-label" for="cd-sp">CD SP</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cd-rj" name="abrangencia" value="CD RJ">
+                <label class="form-check-label" for="cd-rj">CD RJ</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cd-mg" name="abrangencia" value="CD MG">
+                <label class="form-check-label" for="cd-mg">CD MG</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cd-go" name="abrangencia" value="CD GO">
+                <label class="form-check-label" for="cd-go">CD GO</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="dark-stores" name="abrangencia" value="Dark Stores, Polos e Micropolos">
+                <label class="form-check-label" for="dark-stores">Dark Stores, Polos e Micropolos</label>
+            </div>
+        </div>
+
+        <!-- Equipes Atuando -->
+        <div class="mb-3">
+            <label for="equipesAtuando" class="form-label">Equipes Atuando:</label>
+            <textarea class="form-control" id="equipesAtuando" name="equipesAtuando" placeholder="Descreva as equipes atuando"></textarea>
+        </div>
+
+        <!-- Status -->
+        <div class="mb-3">
+            <label for="statusSistemas" class="form-label">Status:</label>
+            <textarea class="form-control" id="statusSistemas" name="statusSistemas" placeholder="Descreva o status"></textarea>
+        </div>
+
+        <!-- Botão específico para Sistemas -->
+        <button type="button" class="btn btn-primary mt-3" id="gerarInformativoSistemas" onclick="gerarInformativoSistemas()">Gerar Informativo para Sistemas</button>
+    </div>
+
+    <!-- Campos específicos para Incidentes de Lojas -->
+    <div id="lojasFields" style="display: none;">
+        <h3>Incidente para Lojas</h3>
+
+        <!-- Seleção de Emoticons para Status de Lojas -->
+        <div class="form-group mb-3">
+            <label>Status do Informativo:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="loja-vermelho" name="statusLoja" value="isolada">
+                <label class="form-check-label" for="loja-vermelho">🔴 Isolada</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="loja-amarelo" name="statusLoja" value="atualizacao">
+                <label class="form-check-label" for="loja-amarelo">🟡 Atualização</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="loja-verde" name="statusLoja" value="normalizado">
+                <label class="form-check-label" for="loja-verde">🟢 Normalizado</label>
+            </div>
+        </div>
+
+        <!-- Campo VD/Filial com AutoComplete -->
+        <div class="mb-3">
+            <label for="vdFilial" class="form-label">VD/Filial:</label>
+            <input type="text" class="form-control" id="vdFilial" name="vdFilial" placeholder="Digite o número ou nome da loja">
+            <ul id="vdFilialSuggestions" class="list-group mt-1" style="display:none;"></ul>
+        </div>
+
+        <!-- Horário de Funcionamento -->
+        <div class="mb-3">
+            <label for="horarioFuncionamento" class="form-label">Horário de Funcionamento:</label>
+            <input type="text" class="form-control" id="horarioFuncionamento" name="horarioFuncionamento" placeholder="Horário carregado automaticamente" readonly>
+        </div>
+
+        <!-- Impacto -->
+        <div class="mb-3">
+            <label for="impactoLojas" class="form-label">Impacto:</label>
+            <textarea class="form-control" id="impactoLojas" name="impactoLojas" placeholder="Descreva o impacto"></textarea>
+        </div>
+
+        <!-- Status -->
+        <div class="mb-3">
+            <label for="statusLojas" class="form-label">Status:</label>
+            <textarea class="form-control" id="statusLojas" name="statusLojas" placeholder="Descreva o status"></textarea>
+        </div>
+
+        <!-- Botão específico para Lojas -->
+        <button type="button" class="btn btn-primary mt-3" id="gerarInformativoLojas" onclick="gerarInformativoLojas()">Gerar Informativo para Lojas</button>
+    </div>
+</div>
+
+<script>
+    // Alterna a exibição dos campos de acordo com o tipo de informativo selecionado
+    function toggleInformativoFields() {
+        const tipoInformativo = document.getElementById("tipoInformativo").value;
+        document.getElementById("sistemasFields").style.display = tipoInformativo === "sistemas" ? "block" : "none";
+        document.getElementById("lojasFields").style.display = tipoInformativo === "lojas" ? "block" : "none";
+    }
+
+    // Exemplo de lista de lojas para o autocomplete de VD/Filial
+    const lojas = ["Loja 001 - Centro", "Loja 002 - Shopping", "Loja 003 - Aeroporto"];
+    const vdFilialInput = document.getElementById("vdFilial");
+    const vdFilialSuggestions = document.getElementById("vdFilialSuggestions");
+
+    // Função para autocomplete de VD/Filial
+    vdFilialInput.addEventListener("input", function () {
+        const query = vdFilialInput.value.toLowerCase();
+        vdFilialSuggestions.innerHTML = '';
+        vdFilialSuggestions.style.display = "none";
+
+        if (query) {
+            const filteredLojas = lojas.filter(loja => loja.toLowerCase().includes(query));
+            filteredLojas.forEach(loja => {
+                const li = document.createElement("li");
+                li.textContent = loja;
+                li.classList.add("list-group-item");
+                li.onclick = () => {
+                    vdFilialInput.value = loja;
+                    vdFilialSuggestions.style.display = "none";
+                };
+                vdFilialSuggestions.appendChild(li);
+            });
+            vdFilialSuggestions.style.display = filteredLojas.length ? "block" : "none";
+        }
+    });
+</script>
+
+<style>
+    .informativo-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f4f4f4;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 100px;
+    }
+</style>

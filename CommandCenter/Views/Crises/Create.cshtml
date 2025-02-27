@@ -1,0 +1,182 @@
+﻿@model CommandCenter.Models.CrisesModel
+
+@{
+    Layout = null; // Remove o layout para evitar a barra de navegação dentro do modal
+
+    var acnOpcoes = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "", Text = "Selecione uma opção" },
+        new SelectListItem { Value = "Peoplesoft", Text = "Peoplesoft" },
+        new SelectListItem { Value = "Datahub", Text = "Datahub" },
+        new SelectListItem { Value = "Staging", Text = "Staging" },
+        new SelectListItem { Value = "Profimetrics", Text = "Profimetrics" },
+        new SelectListItem { Value = "Concentradordpadsp", Text = "Concentrador DPA/DSP" },
+        new SelectListItem { Value = "Fidelize", Text = "Fidelize" },
+        new SelectListItem { Value = "Warmup", Text = "Warmup" },
+        new SelectListItem { Value = "Syncros", Text = "Syncros" },
+        new SelectListItem { Value = "Aplicacoes", Text = "Aplicações" },
+        new SelectListItem { Value = "Site", Text = "Site" },
+        new SelectListItem { Value = "App", Text = "App" },
+        new SelectListItem { Value = "Oms", Text = "OMS" },
+        new SelectListItem { Value = "Retire", Text = "Retire" },
+        new SelectListItem { Value = "Veroit", Text = "VeroIT" },
+        new SelectListItem { Value = "Nexp", Text = "NEXP" },
+        new SelectListItem { Value = "Rappi", Text = "RAPPI" },
+        new SelectListItem { Value = "Sefaz", Text = "SEFAZ" },
+        new SelectListItem { Value = "Vtex", Text = "VTEX" },
+        new SelectListItem { Value = "Ogg", Text = "OGG" },
+        new SelectListItem { Value = "Freterapido", Text = "Frete Rapido" },
+        new SelectListItem { Value = "Adyen", Text = "Adyen" },
+        new SelectListItem { Value = "WmsDelage", Text = "WMS Delage" },
+        new SelectListItem { Value = "WmsKnapp", Text = "WMS KNAPP" },
+        new SelectListItem { Value = "WmsSchaeffer", Text = "WMS Schaeffer" },
+        new SelectListItem { Value = "Acomp", Text = "Acomp" },
+        new SelectListItem { Value = "Pbm", Text = "PBM" },
+        new SelectListItem { Value = "Interplayersportaldadrogaria", Text = "Interplayers - Portal da Drogaria" },
+        new SelectListItem { Value = "Pactomaisfarmaciapopular", Text = "Pacto Mais Farmacia Popular" },
+        new SelectListItem { Value = "Clinicarx", Text = "ClinicarX" },
+        new SelectListItem { Value = "Linxqrlinxagilizaprocfitpos", Text = "Linx (QrLinx, Agiliza, Procfit, POS)" },
+        new SelectListItem { Value = "Suareceitadigital", Text = "Sua receita digital" },
+        new SelectListItem { Value = "Trncentre", Text = "TrnCentre" },
+        new SelectListItem { Value = "Epharma", Text = "Epharma" },
+        new SelectListItem { Value = "Funcionalcard", Text = "Funcional Card" },
+        new SelectListItem { Value = "Vidalink", Text = "VidaLink" },
+        new SelectListItem { Value = "Recargatelecomnet", Text = "Recarga TelecomNet" },
+        new SelectListItem { Value = "Servicosdepagamento", Text = "Serviços de Pagamento" },
+        new SelectListItem { Value = "Rede", Text = "Rede" },
+        new SelectListItem { Value = "Cielo", Text = "Cielo" },
+        new SelectListItem { Value = "Standby", Text = "Standby" },
+        new SelectListItem { Value = "Getnet", Text = "Getnet" },
+        new SelectListItem { Value = "Infraestrutura", Text = "Infraestrutura" },
+        new SelectListItem { Value = "Firewallswitchlinksintegracao", Text = "Firewall, Switch, Links.... Integração" },
+        new SelectListItem { Value = "Fw1100e", Text = "FW 1100E" },
+        new SelectListItem { Value = "Fw1000d", Text = "FW 1000D" }
+    };
+}
+
+<div class="aberturacrs-container">
+    <h1>Abertura de Crise</h1>
+
+    <form asp-action="Create" asp-controller="Crises" method="post">
+        <section>
+            <div class="mb-1">
+                <label class="form-label">Selecione o tipo de crise:</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="aberturaCrise" name="TipoDeCrise" value="abertura" required>
+                <label class="form-check-label" for="aberturaCrise">🔴 Abertura da Crise / Times sendo acionados</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="atualizacaoCrise" name="TipoDeCrise" value="atualizacao">
+                <label class="form-check-label" for="atualizacaoCrise">🟡 Em validação</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="encerradaCrise" name="TipoDeCrise" value="encerrada">
+                <label class="form-check-label" for="encerradaCrise">🟢 Ambiente restabelecido / Crise encerrada</label>
+            </div>
+
+            <div class="mb-3"></div>
+
+            <div class="mb-3">
+                <label for="NumeroDoIncidente" class="form-label">Número do Incidente</label>
+                <input asp-for="NumeroDoIncidente" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Abrangencia" class="form-label">Abrangência</label>
+                <input asp-for="Abrangencia" class="form-control" required />
+            </div>
+
+            <div class="mb-3"></div>
+                <label for="ACN" class="form-label">ACN</label>
+                <div class="d-flex gap-2">
+                    @Html.DropDownListFor(model => model.ACN, acnOpcoes, new { @class = "form-control", id = "opcoesACN" })
+                    <input type="checkbox" id="textoLivreACN" />
+                    <label for="textoLivreACN">Texto Livre</label>
+                    <input id="textoLivreInput" type="text" class="form-control mt-2" placeholder="Digite uma opção manualmente" disabled />
+                <input type="hidden" id="acnFinal" name="ACN" />
+                <span class="text-danger">@Html.ValidationMessageFor(model => model.ACN)</span>
+            </div>
+
+            <div class="mb-3">
+                <label for="CausaDoIncidente" class="form-label">Causa do Incidente</label>
+                <textarea asp-for="CausaDoIncidente" class="form-control" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="ImpactoNosNegocios" class="form-label">Impacto nos Negócios</label>
+                <textarea asp-for="ImpactoNosNegocios" class="form-control" required></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-md-6 mb-3">
+                    <label for="DataHoraIncidente" class="form-label">Data e Hora do Incidente:</label>
+                    <input asp-for="DataHoraIncidente" id="dataHoraIncidente" type="datetime-local" class="form-control" required />
+                </div>
+
+                <div class="col-sm-12 col-md-6  mb-3">
+                    <label for="DataHoraAcionamento" class="form-label">Data e Hora do Acionamento:</label>
+                    <input asp-for="DataHoraAcionamento" id="dataHoraAcionamento" type="datetime-local" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="EquipesAtuando" class="form-label">Equipes Atuando:</label>
+                <textarea asp-for="EquipesAtuando" class="form-control" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="AcoesRealizadas" class="form-label">Ações Realizadas:</label>
+                <textarea asp-for="AcoesRealizadas" class="form-control" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Gerar Informativo</button>
+        </section>
+    </form>
+</div>
+
+    <script>
+        // Estabelece as variaveis de ACN
+        const checkboxTextoLivre = document.getElementById('textoLivreACN');
+        const selectACN = document.getElementById('opcoesACN');
+        const textoLivreInput = document.getElementById('textoLivreInput');
+        const hiddenACN = document.getElementById('acnFinal');
+
+        // Primeiro usa o campo de texto livre e depois verifica o campo do select
+        function updateHiddenField() {
+            if (checkboxTextoLivre.checked) {
+                selectACN.disabled = true;
+                textoLivreInput.disabled = false;
+                hiddenACN.value = textoLivreInput.value;
+                selectACN.value = "";// Usa o valor do texto livre
+            } else {
+                selectACN.disabled = false;
+                textoLivreInput.disabled = true;
+                hiddenACN.value = selectACN.value; // Usa o valor do select
+                textoLivreInput.value = ''; // Limpa o campo de texto quando desativado
+            }
+        }
+
+        // Atualiza o campo hidden quando o select muda
+        selectACN.addEventListener('change', function () {
+            if (!checkboxTextoLivre.checked) {
+                hiddenACN.value = selectACN.value;
+            }
+        });
+
+        // Atualiza o campo hidden quando o texto livre muda
+        textoLivreInput.addEventListener('input', function () {
+           if (checkboxTextoLivre.checked) {
+              hiddenACN.value = textoLivreInput.value;
+         }
+        });
+
+        // Ativa a função ao carregar e adiciona evento ao checkbox
+        updateHiddenField();
+        checkboxTextoLivre.addEventListener('change', updateHiddenField);
+ 
+    </script>
+

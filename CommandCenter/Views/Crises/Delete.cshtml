@@ -1,0 +1,35 @@
+﻿@model CommandCenter.Models.CrisesModel
+
+@{
+    Layout = null;
+}
+
+<div class="atualizacaocrs-container">
+    <h1>@ViewData["Title"]</h1>
+
+    <form method="post" asp-action="EncerrarCrise" asp-controller="Crises">
+
+        <!-- Campo de Atualização do Status -->
+        <input type="hidden" name="id" value="@Model.Id" />
+        <div class="mb-3">
+            <label for="atualizarStatusCrise" class="form-label">Atualizar Status:</label>
+            <textarea class="form-control" id="atualizarStatusCrise" name="novoHistorico" placeholder="Insira o novo status para a crise"></textarea>
+        </div>
+
+        <!-- Botão para Atualizar Crise -->
+        <button type="submit" class="btn btn-primary mt-3">Atualizar Crise</button>
+    </form>
+</div>
+
+
+<style>
+    .atualizacaocrs-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f4f4f4;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 100px;
+    }
+</style>
