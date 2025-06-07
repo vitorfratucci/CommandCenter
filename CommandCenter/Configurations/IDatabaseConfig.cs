@@ -4,6 +4,7 @@
     {
         string ConnectionString { get; set; }
         string DatabaseName { get; set; }
-        string CrisesCollectionName { get; set; } // 🔹 Adicione essa linha!
+        string CrisesCollectionName { get; set; }
+        string InformativosCollectionName { get; set; } // 🔹 Adicionado para Informativos
     }
 }

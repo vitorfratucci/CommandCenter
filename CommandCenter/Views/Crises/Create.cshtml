@@ -59,25 +59,6 @@
 
     <form asp-action="Create" asp-controller="Crises" method="post">
         <section>
-            <div class="mb-1">
-                <label class="form-label">Selecione o tipo de crise:</label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="radio" id="aberturaCrise" name="TipoDeCrise" value="abertura" required>
-                <label class="form-check-label" for="aberturaCrise">🔴 Abertura da Crise / Times sendo acionados</label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="radio" id="atualizacaoCrise" name="TipoDeCrise" value="atualizacao">
-                <label class="form-check-label" for="atualizacaoCrise">🟡 Em validação</label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="radio" id="encerradaCrise" name="TipoDeCrise" value="encerrada">
-                <label class="form-check-label" for="encerradaCrise">🟢 Ambiente restabelecido / Crise encerrada</label>
-            </div>
-
             <div class="mb-3"></div>
 
             <div class="mb-3">
@@ -89,8 +70,8 @@
                 <label for="Abrangencia" class="form-label">Abrangência</label>
                 <input asp-for="Abrangencia" class="form-control" required />
             </div>
-
-            <div class="mb-3"></div>
+            
+           <div class="mb-3"></div> 
                 <label for="ACN" class="form-label">ACN</label>
                 <div class="d-flex gap-2">
                     @Html.DropDownListFor(model => model.ACN, acnOpcoes, new { @class = "form-control", id = "opcoesACN" })

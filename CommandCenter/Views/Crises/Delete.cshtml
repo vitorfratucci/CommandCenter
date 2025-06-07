@@ -9,12 +9,37 @@
 
     <form method="post" asp-action="EncerrarCrise" asp-controller="Crises">
 
+        <div>Cauza Raiz resolvida ?</div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault1" value="false" onclick="cauzaRaiz(true)">
+            <label class="form-check-label" for="radioDefault1">
+                Não
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault2" value="true" checked onclick="cauzaRaiz(false)">
+            <label class="form-check-label" for="radioDefault2">
+                Sim
+            </label>
+        </div>
+
         <!-- Campo de Atualização do Status -->
         <input type="hidden" name="id" value="@Model.Id" />
-        <div class="mb-3">
-            <label for="atualizarStatusCrise" class="form-label">Atualizar Status:</label>
-            <textarea class="form-control" id="atualizarStatusCrise" name="novoHistorico" placeholder="Insira o novo status para a crise"></textarea>
+
+
+
+        <div class="form-group" id="contentCauzaRaiz" style="display: none">
+            <label for="CausaRaizResolvida">🛠 Explicação do porque a cauza raiz foi ou não resolvida</label>
+            <textarea asp-for="CausaRaizResolvida" class="form-control" rows="2"></textarea>
+            <span asp-validation-for="CausaRaizResolvida" class="text-danger"></span>
         </div>
+
+        <div class="form-group">
+            <label for="SolucaoAplicada">🛠 Solução aplicada:</label>
+            <textarea asp-for="SolucaoAplicada" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="SolucaoAplicada" class="text-danger"></span>
+        </div>
+
 
         <!-- Botão para Atualizar Crise -->
         <button type="submit" class="btn btn-primary mt-3">Atualizar Crise</button>
@@ -33,3 +58,9 @@
         margin-bottom: 100px;
     }
 </style>
+
+<script>
+    function cauzaRaiz(value){
+        value == true ? document.querySelector('#contentCauzaRaiz').style.display = 'block' : document.querySelector('#contentCauzaRaiz').style.display = 'none'
+    }
+</script>

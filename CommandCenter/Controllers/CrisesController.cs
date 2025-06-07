@@ -67,7 +67,7 @@ namespace CommandCenter.Controllers
 
         }
 
-        // Encerramento Formulario
+        // ENCERRAMENTO FORMULARIO
 
         [HttpPost]
         public async Task<IActionResult> EncerrarCrise(Guid id, string novoHistorico)

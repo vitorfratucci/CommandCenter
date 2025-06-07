@@ -1,6 +1,144 @@
-﻿@{
+﻿@model IEnumerable<CommandCenter.Models.InformativosModel>
+
+@{
+    Layout = "_Layout";
     ViewData["Title"] = "Painel de Informativos";
 }
 
-<h1>Lista de Informativos</h1>
-<p>Bem-vindo à página de informativos!</p>
+<div class="container mt-4">
+    <h1>Painel de Informativos</h1>
+
+    <button type="button" class="btn btn-primary" id="abrirCreateModal">
+        <i class="bi bi-plus-lg"></i> Novo Informativo
+    </button>
+
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Operação</th>
+                    <th>Detalhes</th>
+                    <th>Atualizar</th>
+                    <th>Encerrar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var informe in Model)
+                    {
+                        var emoji = informe.HorarioTermino.HasValue ? "✅" : "⚠";
+                        string fim = informe.HorarioTermino.HasValue ? "Horário de encerramento: " + informe.HorarioTermino.Value.ToString() : informe.PrevisaoTermino.HasValue ? "Horário de previsão: " + informe.PrevisaoTermino.Value.ToString() : "Horário de previsão: Sem Previsão";
+
+                        <tr>
+                            <td>@informe.OperacaoAfetada</td>
+                            <td>
+                                <button class="btn btn-info detalhes-informe"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalInformativos"
+                                        data-emoji="@emoji"
+                                        data-operacao="@informe.OperacaoAfetada"
+                                        data-natureza="@informe.NaturezaIncidente"
+                                        data-tipo="@informe.TipoImpacto"
+                                        data-descricao="@informe.DescricaoImpacto"
+                                        data-inicio="@informe.HorarioInicio.ToString("dd/MM/yyyy HH:mm")"
+                                        data-fim="@fim"
+                                        data-status="@informe.Status">
+                                    🔍 Detalhes
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning atualizar-informe" data-id="@informe.Id">
+                                    ✏️ Atualizar
+                                </button>
+                            </td>
+                            <td>
+                                @if (informe.HorarioTermino.HasValue)
+                                {
+                                    <span class="text-success">✅ Encerrado</span>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-danger encerrar-informe" data-id="@informe.Id">🛑 Encerrar</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">Nenhum informativo registrado.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Reutilizável -->
+<div class="modal fade" id="modalInformativos" tabindex="-1" aria-labelledby="modalInformativosLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalInformativosLabel">Informativo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body" id="modalInformativoContent">
+                <!-- Conteúdo via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#abrirCreateModal").on("click", function () {
+                $.get("/Informativos/Create", function (html) {
+                    $("#modalInformativoContent").html(html);
+                    $("#modalInformativos").modal("show");
+                });
+            });
+
+            $(document).on("click", ".atualizar-informe", function () {
+                const id = $(this).data("id");
+                $.get("/Informativos/Edit?id=" + id, function (html) {
+                    $("#modalInformativoContent").html(html);
+                    $("#modalInformativos").modal("show");
+                });
+            });
+
+            $(document).on("click", ".encerrar-informe", function () {
+                const id = $(this).data("id");
+                $.get("/Informativos/Delete?id=" + id, function (html) {
+                    $("#modalInformativoContent").html(html);
+                    $("#modalInformativos").modal("show");
+                });
+            });
+
+            $(document).on("click", ".detalhes-informe", function () {
+                const emoji = $(this).data("emoji") || "⚠";
+                const operacao = $(this).data("operacao");
+                const natureza = $(this).data("natureza");
+                const tipo = $(this).data("tipo");
+                const descricao = $(this).data("descricao");
+                const inicio = $(this).data("inicio");
+                const fim = $(this).data("fim");
+                const status = $(this).data("status");
+
+                const mensagem = `${emoji} Informativo incidente:</br>
+                                Operação afetada: ${operacao}</br>
+                                Natureza do incidente: ${natureza}</br>
+                                Tipo de impacto: ${tipo}</br>
+                                Descrição do impacto: ${descricao}</br>
+                                Horário de início do incidente: ${inicio}</br>
+                                ${fim}</br>
+                                Status: ${status}`;
+
+                $("#modalInformativoContent").html(`<pre class="text-wrap">${mensagem}</pre>`);
+                $("#modalInformativos").modal("show");
+            });
+        });
+    </script>
+}

@@ -7,7 +7,7 @@
 }
 
 @{
-    var acnOpcoes = new Dictionary<string, string>
+    var acnOpcoes = new Dictionary<string, string> // CORRELAÇÃO DE OPÇÕES ACN PARA VISUALIZÃÇÃO AINDA NAO OPERACIONAL
     {
         { "peoplesoft", "Peoplesoft" },
         { "datahub", "Datahub" },
@@ -57,7 +57,6 @@
     };
 }
 
-
 <div class="container mt-4">
     <h1>Painel de Crises</h1>
 
@@ -89,7 +88,6 @@
                                 <button class="btn btn-info detalhes-crise"
                                         data-bs-toggle="modal"
                                         data-bs-target="#modalCrises"
-                                        data-tipo="@crise.TipoDeCrise"
                                         data-incidente="@crise.NumeroDoIncidente"
                                         data-abrangencia="@crise.Abrangencia"
                                         data-acn="@crise.ACN"
@@ -98,7 +96,11 @@
                                         data-datahora="@crise.DataHoraIncidente.ToString("dd/MM/yyyy HH:mm")"
                                         data-acionamento="@crise.DataHoraAcionamento.ToString("dd/MM/yyyy HH:mm")"
                                         data-equipes="@crise.EquipesAtuando"
-                                        data-acoes='@JsonSerializer.Serialize(crise.AcoesRealizadas)'>
+                                        data-encerramento="@crise.DataEncerramento?.ToString("dd/MM/yyyy HH:mm")"
+                                        data-acoes='@JsonSerializer.Serialize(crise.AcoesRealizadas)'
+                                        data-solucao="@crise.SolucaoAplicada"
+                                        data-causaraiz="@crise.CausaRaizResolvida">
+
                                     🔍 Detalhes
                                 </button>
                             </td>
@@ -127,7 +129,7 @@
     </div>
 </div>
 
-<!-- Modal para Criar Nova Crise -->
+<!-- MODAL DOS BOTÕES -->
 <div class="modal fade" id="modalCrises" tabindex="-1" aria-labelledby="modalCrisesLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -141,7 +143,6 @@
         </div>
     </div>
 </div>
-
 
 
 @section Scripts {
@@ -164,8 +165,6 @@
 
             // Função para exibir os detalhes da crise no modal
             $(document).on("click", ".detalhes-crise", function () {
-                
-                let tipo = $(this).data("tipo");
                 let incidente = $(this).data("incidente");
                 let abrangencia = $(this).data("abrangencia");
                 let acn = $(this).data("acn");
@@ -173,34 +172,47 @@
                 let impacto = $(this).data("impacto");
                 let dataHora = $(this).data("datahora");
                 let acionamento = $(this).data("acionamento");
+                let encerramento = $(this).data("encerramento");
                 let equipes = $(this).data("equipes");
                 let acoes = $(this).data("acoes");
+                let solucao = $(this).data("solucao");
+                let causaRaiz = $(this).data("causaraiz");
 
-                historicoHtml = "<ul>"
-                if (Array.isArray(acoes)) {         
-                    historicoHtml +=  acoes.map(acao => `<li>✔️ ${acao}</li>`).join('');    
+                let historicoHtml = "";
+                if (Array.isArray(acoes)) {
+                    historicoHtml += acoes.map(acao => `✅ ${acao}<br>`).join('');
                 } else {
-                    historicoHtml = acoes ? `<li>✔️ ${acoes}</li>` : "<li>Nenhuma ação registrada.</li>";
+                    historicoHtml += acoes ? `✅ ${acoes}<br>` : "Nenhuma ação registrada.<br>";
                 }
-                historicoHtml += "</ul>"
 
-                let mensagem = `🔴 ${tipo}</br>
-                🔢 Incidente: ${incidente}</br>
-                🏭 Unidades: ${abrangencia}</br>
-                💥 Elementos Comprometidos: ${acn}</br>
-                🧾 Causa do incidente: ${causa}</br>
-                💸 Impacto nos negócios: ${impacto}</br>
-                🕛 Data e hora do Incidente: ${dataHora}</br>
-                🕧 Data do Acionamento: ${acionamento}</br>
-                👥 Equipes Atuando: ${equipes}</br>
+                let emojiStatus = encerramento ? "🟢" : "🔴";
 
-                📆 Histórico de ações realizadas:</br>${historicoHtml}`;
+                let mensagem = `
+                ${emojiStatus}<br>
+                🔢 Nº do Incidente: ${incidente}<br>
+                🏭 Unidades: ${abrangencia}<br>
+                💥 Elementos Comprometidos: ${acn}<br>
+                🧾 Causa do incidente: ${causa}<br>
+                💸 Impacto nos negócios: ${impacto}<br>
+                🕛 Data e Hora do Incidente: ${dataHora}<br>
+                🕧 Data e Hora Acionamento da Crise: ${acionamento}<br>
+                ⏲ Data e Hora Encerramento da Crise: ${encerramento || "Ainda em andamento"}<br>
+                👥 Equipes atuando: ${equipes}<br><br>
 
-                    $("#modalContent").html(mensagem);
-                    $("#modalCrises").modal("show");
+                📆 Histórico de ações realizadas:<br>${historicoHtml}<br>
+            `;
+
+                if (encerramento) {
+                    mensagem += `
+                    🛠 Solução Aplicada: ${solucao || "Não registrada"}<br>
+                    🛠 Causa Raiz Resolvida: ${causaRaiz || "Não registrada"}<br>
+                `;
+                }
+
+                $("#modalContent").html(mensagem);
+                $("#modalCrises").modal("show");
             });
 
-        
 
             // Abrir modal para editar crise
             $(document).on("click", ".atualizar-crise", function () {
@@ -211,14 +223,13 @@
                     type: "GET",
                     success: function (response) {
                         $("#modalContent").html(response);
-                    $("#modalCrises").modal("show");
+                        $("#modalCrises").modal("show");
                     },
                     error: function () {
                         alert("Erro ao carregar o formulário de edição!");
                     }
                 });
             });
-
 
             $(document).on("click", ".encerrar-crise", function () {
                 let criseId = $(this).data("id");

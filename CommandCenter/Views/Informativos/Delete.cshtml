@@ -4,21 +4,16 @@
 }
 
 <div class="informativo-container">
-    <h1>Atualizar Informativo</h1>
+    <h1>Encerrar Informativo</h1>
 
     <form asp-action="Edit" asp-controller="Informativos" method="post">
         <input type="hidden" name="id" value="@Model.Id" />
-        <input type="hidden" asp-for="DescricaoImpacto"/>
+        <input type="hidden" asp-for="DescricaoImpacto" />
         <input type="hidden" asp-for="TipoImpacto" />
         <input type="hidden" asp-for="OperacaoAfetada" />
         <input type="hidden" asp-for="NaturezaIncidente" />
+        <input type="hidden" asp-for="HorarioTermino" value="@DateTime.Now" />
 
-        <div class="mb-3">
-            <label class="form-label">Previsão de Término</label>
-            <div class="d-flex gap-2 align-items-center">
-                <input asp-for="PrevisaoTermino" id="previsaoTerminoInput" type="datetime-local" class="form-control" />
-            </div>
-        </div>
 
         <div class="mb-3">
             <label class="form-label">Status</label>

@@ -52,7 +52,7 @@ namespace CommandCenter.Repository
             await _crisesCollection.UpdateOneAsync(filtro, update);
         }
 
-        // criar variavel dataencerramento na modelcrises 
+        // CRIAR VARIAVEL DATAENCERRAMENTO NA MODELCRISES 
 
         public async Task EncerrarCrise(Guid id, string novoHistorico)
         {
@@ -60,7 +60,6 @@ namespace CommandCenter.Repository
             var dataEncerramento = DateTime.Now;
             var update =  Builders<CrisesModel>.Update.Set(r => r.DataEncerramento, dataEncerramento);
             await _crisesCollection.UpdateOneAsync(filtro, update);
-            await AtualizarHistoricoAsync(id, novoHistorico);
 
         }
 

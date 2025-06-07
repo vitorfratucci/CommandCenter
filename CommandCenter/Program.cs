@@ -12,15 +12,16 @@ builder.Services.Configure<DatabaseConfig>(
 builder.Services.AddSingleton<IDatabaseConfig>(sp =>
     sp.GetRequiredService<IOptions<DatabaseConfig>>().Value);
 
-// Injeta o repositório no container de dependências
+// Repositórios
 builder.Services.AddSingleton<ICrisesRepository, CrisesRepository>();
+builder.Services.AddSingleton<IInformativosRepository, InformativosRepository>(); // ✅ NOVO!
 
-// Adicionando MVC ao projeto
+// MVC
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configuração do pipeline HTTP
+// Pipeline HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -32,7 +33,6 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
 
-// Definição da Rota Padrão
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
