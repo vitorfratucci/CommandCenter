@@ -70,12 +70,12 @@ namespace CommandCenter.Controllers
         // ENCERRAMENTO FORMULARIO
 
         [HttpPost]
-        public async Task<IActionResult> EncerrarCrise(Guid id, string novoHistorico)
+        public async Task<IActionResult> EncerrarCrise(Guid id, string novoHistorico, string SolucaoAplicada, string CausaRaizResolvida)
         {
-            await _crisesRepository.EncerrarCrise(id, novoHistorico);
+            await _crisesRepository.EncerrarCrise(id, novoHistorico, SolucaoAplicada, CausaRaizResolvida);
             return RedirectToAction("Index");
-
         }
+
 
         // Atualiza uma crise existente
         [HttpPost]
@@ -124,5 +124,54 @@ namespace CommandCenter.Controllers
             bool isConnected = await _crisesRepository.TestConnectionAsync();
             return Json(new { success = isConnected });
         }
+        // Exibe os detalhes da crise no modal (AJAX)
+        public async Task<IActionResult> DetailsModal(Guid id)
+        {
+            var crise = await _crisesRepository.GetByIdAsync(id);
+
+            if (crise == null)
+            {
+                return NotFound();
+            }
+
+            // Gera a mensagem formatada (igual você tinha no JS antes)
+            string emojiStatus = crise.DataEncerramento != null ? "🟢" : "🔴";
+
+            string historico = "";
+            if (crise.AcoesRealizadas != null && crise.AcoesRealizadas.Any())
+            {
+                historico = string.Join("<br>", crise.AcoesRealizadas.Select(a => $"✅ {a}"));
+            }
+            else
+            {
+                historico = "Nenhuma ação registrada.<br>";
+            }
+
+            string mensagem = $@"
+        {emojiStatus}<br>
+        🔢 Nº do Incidente: {crise.NumeroDoIncidente}<br>
+        🏭 Unidades: {crise.Abrangencia}<br>
+        💥 Elementos Comprometidos: {crise.ACN}<br>
+        🧾 Causa do incidente: {crise.CausaDoIncidente}<br>
+        💸 Impacto nos negócios: {crise.ImpactoNosNegocios}<br>
+        🕛 Data e Hora do Incidente: {crise.DataHoraIncidente:dd/MM/yyyy HH:mm}<br>
+        🕧 Data e Hora Acionamento da Crise: {crise.DataHoraAcionamento:dd/MM/yyyy HH:mm}<br>
+        ⏲ Data e Hora Encerramento da Crise: {(crise.DataEncerramento.HasValue ? crise.DataEncerramento.Value.ToString("dd/MM/yyyy HH:mm") : "Ainda em andamento")}<br>
+        👥 Equipes atuando: {crise.EquipesAtuando}<br><br>
+        📆 Histórico de ações realizadas:<br>{historico}<br>
+    ";
+
+            if (crise.DataEncerramento != null)
+            {
+                mensagem += $@"
+            <br>
+            🛠 Solução Aplicada: {crise.SolucaoAplicada ?? "Não registrada"}<br>
+            🛠 Causa Raiz Resolvida: {crise.CausaRaizResolvida ?? "Não registrada"}<br>
+        ";
+            }
+
+            return Content(mensagem, "text/html"); // Retorna HTML direto pro modal
+        }
     }
+
 }

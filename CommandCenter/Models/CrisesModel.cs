@@ -14,24 +14,24 @@ namespace CommandCenter.Models
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [BsonElement("NumeroDoIncidente")]
-        public string NumeroDoIncidente { get; set; }
+        public string NumeroDoIncidente { get; set; } = string.Empty;
 
         [BsonElement("Abrangencia")]
-        public string Abrangencia { get; set; }
+        public string Abrangencia { get; set; } = string.Empty;
 
         [BsonElement("ACN")]
         [Required(ErrorMessage = "O campo ACN é obrigatório.")]
-        public string ACN { get; set; }
+        public string ACN { get; set; } = string.Empty;
 
-        // 🔹 Descrição do Incidente
         [BsonElement("CausaDoIncidente")]
-        public string CausaDoIncidente { get; set; }
+        public string CausaDoIncidente { get; set; } = string.Empty;
 
         [BsonElement("ImpactoNosNegocios")]
-        public string ImpactoNosNegocios { get; set; }
+        public string ImpactoNosNegocios { get; set; } = string.Empty;
 
         [BsonElement("EquipesAtuando")]
-        public string EquipesAtuando { get; set; }
+        public string EquipesAtuando { get; set; } = string.Empty;
+
 
         // 🔹 Datas e Horários
         private DateTime _dataHoraIncidente;

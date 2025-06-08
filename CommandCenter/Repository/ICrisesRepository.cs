@@ -12,7 +12,8 @@ namespace CommandCenter.Repository
         Task<bool> UpdateAsync(Guid id, CrisesModel crise);
         Task<bool> DeleteAsync(Guid id);
         Task AtualizarHistoricoAsync(Guid id, string novoHistorico);
-        Task EncerrarCrise(Guid id, string novoHistorico);
+        Task EncerrarCrise(Guid id, string novoHistorico, string solucaoAplicada, string causaRaizResolvida);
+
 
         // Método adicionado para testar conexão com o MongoDB
         Task<bool> TestConnectionAsync();

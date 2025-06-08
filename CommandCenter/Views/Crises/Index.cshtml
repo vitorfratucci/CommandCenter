@@ -86,21 +86,7 @@
                             </td> 
                             <td>
                                 <button class="btn btn-info detalhes-crise"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalCrises"
-                                        data-incidente="@crise.NumeroDoIncidente"
-                                        data-abrangencia="@crise.Abrangencia"
-                                        data-acn="@crise.ACN"
-                                        data-causa="@crise.CausaDoIncidente"
-                                        data-impacto="@crise.ImpactoNosNegocios"
-                                        data-datahora="@crise.DataHoraIncidente.ToString("dd/MM/yyyy HH:mm")"
-                                        data-acionamento="@crise.DataHoraAcionamento.ToString("dd/MM/yyyy HH:mm")"
-                                        data-equipes="@crise.EquipesAtuando"
-                                        data-encerramento="@crise.DataEncerramento?.ToString("dd/MM/yyyy HH:mm")"
-                                        data-acoes='@JsonSerializer.Serialize(crise.AcoesRealizadas)'
-                                        data-solucao="@crise.SolucaoAplicada"
-                                        data-causaraiz="@crise.CausaRaizResolvida">
-
+                                        data-id="@crise.Id">
                                     🔍 Detalhes
                                 </button>
                             </td>
@@ -108,12 +94,15 @@
                                 <button data-id="@crise.Id" class="btn btn-warning atualizar-crise">✏️ Atualizar</button>
                             </td>
                             <td>
-                                @if (crise.DataEncerramento == null){
-                                    <button data-id="@crise.Id" class="btn btn-danger encerrar-crise">🗑️ Encerrar</button>
-                                }else
+                                @if (crise.DataEncerramento == null)
+                                {
+                                    <button data-id="@crise.Id" class="btn btn-danger encerrar-crise">✅ Encerrar</button>
+                                }
+                                else
                                 {
                                     <span>crise já encerrada</span>
                                 }
+
                             </td>
                         </tr>
                     }
@@ -164,54 +153,23 @@
             });
 
             // Função para exibir os detalhes da crise no modal
-            $(document).on("click", ".detalhes-crise", function () {
-                let incidente = $(this).data("incidente");
-                let abrangencia = $(this).data("abrangencia");
-                let acn = $(this).data("acn");
-                let causa = $(this).data("causa");
-                let impacto = $(this).data("impacto");
-                let dataHora = $(this).data("datahora");
-                let acionamento = $(this).data("acionamento");
-                let encerramento = $(this).data("encerramento");
-                let equipes = $(this).data("equipes");
-                let acoes = $(this).data("acoes");
-                let solucao = $(this).data("solucao");
-                let causaRaiz = $(this).data("causaraiz");
+$(document).on("click", ".detalhes-crise", function () {
+    let criseId = $(this).data("id");
 
-                let historicoHtml = "";
-                if (Array.isArray(acoes)) {
-                    historicoHtml += acoes.map(acao => `✅ ${acao}<br>`).join('');
-                } else {
-                    historicoHtml += acoes ? `✅ ${acoes}<br>` : "Nenhuma ação registrada.<br>";
-                }
+    $.ajax({
+        url: "/Crises/DetailsModal",
+        type: "GET",
+        data: { id: criseId },
+        success: function (response) {
+            $("#modalContent").html(response);
+            $("#modalCrises").modal("show");
+        },
+        error: function () {
+            alert("Erro ao carregar os detalhes da crise!");
+        }
+    });
+});
 
-                let emojiStatus = encerramento ? "🟢" : "🔴";
-
-                let mensagem = `
-                ${emojiStatus}<br>
-                🔢 Nº do Incidente: ${incidente}<br>
-                🏭 Unidades: ${abrangencia}<br>
-                💥 Elementos Comprometidos: ${acn}<br>
-                🧾 Causa do incidente: ${causa}<br>
-                💸 Impacto nos negócios: ${impacto}<br>
-                🕛 Data e Hora do Incidente: ${dataHora}<br>
-                🕧 Data e Hora Acionamento da Crise: ${acionamento}<br>
-                ⏲ Data e Hora Encerramento da Crise: ${encerramento || "Ainda em andamento"}<br>
-                👥 Equipes atuando: ${equipes}<br><br>
-
-                📆 Histórico de ações realizadas:<br>${historicoHtml}<br>
-            `;
-
-                if (encerramento) {
-                    mensagem += `
-                    🛠 Solução Aplicada: ${solucao || "Não registrada"}<br>
-                    🛠 Causa Raiz Resolvida: ${causaRaiz || "Não registrada"}<br>
-                `;
-                }
-
-                $("#modalContent").html(mensagem);
-                $("#modalCrises").modal("show");
-            });
 
 
             // Abrir modal para editar crise

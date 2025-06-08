@@ -54,14 +54,34 @@ namespace CommandCenter.Repository
 
         // CRIAR VARIAVEL DATAENCERRAMENTO NA MODELCRISES 
 
-        public async Task EncerrarCrise(Guid id, string novoHistorico)
+        public async Task EncerrarCrise(Guid id, string novoHistorico, string solucaoAplicada, string causaRaizResolvida)
         {
             var filtro = Builders<CrisesModel>.Filter.Eq(r => r.Id, id);
-            var dataEncerramento = DateTime.Now;
-            var update =  Builders<CrisesModel>.Update.Set(r => r.DataEncerramento, dataEncerramento);
-            await _crisesCollection.UpdateOneAsync(filtro, update);
 
+            var updates = new List<UpdateDefinition<CrisesModel>>();
+
+            // Atualiza DataEncerramento
+            updates.Add(Builders<CrisesModel>.Update.Set(r => r.DataEncerramento, DateTime.Now));
+
+            // Atualiza SolucaoAplicada
+            updates.Add(Builders<CrisesModel>.Update.Set(r => r.SolucaoAplicada, solucaoAplicada));
+
+            // Atualiza CausaRaizResolvida
+            updates.Add(Builders<CrisesModel>.Update.Set(r => r.CausaRaizResolvida, causaRaizResolvida));
+
+            // Se houver novoHistorico, adiciona no AcoesRealizadas
+            if (!string.IsNullOrWhiteSpace(novoHistorico))
+            {
+                updates.Add(Builders<CrisesModel>.Update.Push(r => r.AcoesRealizadas, novoHistorico));
+            }
+
+            // Aplica todas as atualizações
+            var updateDefinition = Builders<CrisesModel>.Update.Combine(updates);
+
+            await _crisesCollection.UpdateOneAsync(filtro, updateDefinition);
         }
+
+
 
         public async Task<bool> TestConnectionAsync()
         {
