@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: commandcenter_mongo
+    restart: unless-stopped
+    environment:
+      # valores lidos do .env (veja .env.example)
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-commandcenter}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-changeme}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-commandcenter}
+    ports:
+      # expõe a porta para conectar localmente (padrão 27017)
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      # volume nomeado para persistência de dados (funciona em qualquer host)
+      - mongo_data:/data/db
+      # opcional: scripts de inicialização (cole .js/.sh em ./mongo/initdb se quiser seed)
+      - ./mongo/initdb:/docker-entrypoint-initdb.d:ro
+    networks:
+      - commandcenter_network
+    healthcheck:
+      # tenta fazer ping no servidor mongo (requer shell mongo presente na imagem)
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo_data:
+
+networks:
+  commandcenter_network:
+    driver: bridge
